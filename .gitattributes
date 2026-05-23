@@ -1,0 +1,3 @@
+models/best_classifier.joblib filter=lfs diff=lfs merge=lfs -text
+models/chroma_db/chroma.sqlite3 filter=lfs diff=lfs merge=lfs -text
+models/chroma_db/*/data_level0.bin filter=lfs diff=lfs merge=lfs -text
