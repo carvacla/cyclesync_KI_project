@@ -8,6 +8,7 @@ sdk_version: 1.35.0
 app_file: app.py
 pinned: false
 license: apache-2.0
+python_version: "3.11"
 short_description: Zyklusbasierter Trainings- & Recovery-Coach mit ML + RAG
 ---
 
