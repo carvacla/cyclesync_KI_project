@@ -25,9 +25,6 @@ Primary blocks used for core solution (choose 2):
 
 If a third block is selected, it is documented and graded separately as extra work.
 
-Guidance hint: Keep the project idea short and consistent. Focus most details on the selected blocks.
-Evidence hint: Show where each selected block contributes to the final system.
-
 ---
 
 ## 1. Project Foundation (Short)
@@ -44,9 +41,6 @@ Evidence hint: Show where each selected block contributes to the final system.
 ### 1.2 Integration Logic
 - How the selected blocks interact: The ML block classifies the training recommendation (low/moderate/high) from structured user data (cycle day, symptoms, sleep quality, resting heart rate, etc.). The structured prediction (phase, intensity, recovery hours, risk, confidence) is then passed as context to the RAG pipeline. The RAG retrieves matching PubMed abstracts and a large language model generates a personalized German-language explanation citing the studies.
 - Data and output flow between blocks: User input → ML pipeline ([`src/ml_model.py`](../src/ml_model.py)) → structured prediction → RAG pipeline ([`src/rag_pipeline.py`](../src/rag_pipeline.py)) → combined response containing recommendation, explanation, and source list. Orchestrated by [`src/recommender.py`](../src/recommender.py), presented via [`app.py`](../app.py).
-
-Guidance hint: This section should be short. The detailed work belongs in block sections.
-Evidence hint: Include one clear pipeline overview.
 
 ---
 
@@ -92,9 +86,6 @@ Visual comparison: [`docs/screenshots/Modell_Vergleich_ValidationSet.png`](scree
 - Inputs received from other block(s): None in the current version — the ML block operates directly on structured user input.
 - Outputs provided to other block(s): The structured prediction `{phase, intensity, recovery_hours, risk, confidence}` is passed to the RAG pipeline via the [`CycleSyncRecommender`](../src/recommender.py#L8-L19). Phase and intensity values shape the retrieval query, and all values are injected into the prompt as context.
 
-Guidance hint: Keep entries practical and evidence-based.
-Evidence hint: Add values, not only claims.
-
 ### 2B. NLP (If selected)
 
 #### 2B.1 Data Source(s)
@@ -132,34 +123,6 @@ See [`docs/screenshots/Qualitative_Bewertung.png`](screenshots/Qualitative_Bewer
 - Inputs received from other block(s): Structured ML prediction `{phase, intensity, recovery_hours, risk, confidence}` from Block 2A — included in the prompt context and used to build the retrieval query (see [`src/rag_pipeline.py`, lines 80-87](../src/rag_pipeline.py#L80-L87)).
 - Outputs provided to other block(s): Natural-language explanation plus a list of cited studies (PMID, title, year) returned to the application layer ([`app.py`](../app.py)) for display.
 
-Guidance hint: Show concrete prompt or retrieval decisions.
-Evidence hint: Include representative outputs or failure cases.
-
-### 2C. Computer Vision (If selected)
-
-N/A — Computer Vision is not part of this project.
-
-#### 2C.1 Data Source(s)
-N/A
-
-#### 2C.2 Preprocessing and Augmentation
-N/A
-
-#### 2C.3 Model Selection
-N/A
-
-#### 2C.4 Model Comparison and Iterations
-N/A
-
-#### 2C.5 Evaluation and Error Analysis
-N/A
-
-#### 2C.6 Integration with Other Block(s)
-N/A
-
-Guidance hint: Use concise examples from real predictions.
-Evidence hint: Include sample outputs and observed failure cases.
-
 ---
 
 ## 3. Deployment
@@ -171,9 +134,6 @@ Evidence hint: Include sample outputs and observed failure cases.
   3. The ML prediction is displayed in 4 metric tiles (cycle phase, intensity, recovery time, risk).
   4. Below, the LLM-generated explanation appears together with an expandable list of cited sources (PubMed links) and model confidence.
 - Screenshot or short demo: See [`docs/screenshots/Anzeige.png`](screenshots/Anzeige.png) and [`docs/screenshots/AnzeigeHF.png`](screenshots/AnzeigeHF.png) for the running app on HuggingFace Spaces.
-
-Guidance hint: Deployment must be usable.
-Evidence hint: Add screenshots or short demo references.
 
 ---
 
@@ -195,10 +155,6 @@ Evidence hint: Add screenshots or short demo references.
   streamlit run app.py
 ```
 - Reproducibility notes: All notebooks use `RANDOM_STATE=42`. Library versions are pinned in [`requirements.txt`](../requirements.txt) (notably `scikit-learn==1.6.1` matching the training environment, and `httpx==0.27.2` for OpenAI compatibility on HuggingFace Spaces). Python 3.11 recommended. For HuggingFace Spaces deployment: set `OPENAI_API_KEY` as a Space secret under Settings → Variables and secrets.
-
-Guidance hint: Another person should be able to run your project from this section.
-Evidence hint: Include exact commands and versions.
-
 ---
 
 ## 5. Optional Bonus Evidence
