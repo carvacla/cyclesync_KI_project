@@ -1,0 +1,26 @@
+{
+  "num_features": [
+    "day_in_cycle",
+    "bbt_celsius",
+    "sleep_hours",
+    "sleep_quality",
+    "resting_hr",
+    "age",
+    "symptom_count",
+    "sym_cramps",
+    "sym_fatigue",
+    "sym_mood_low",
+    "sym_headache",
+    "sym_bloating",
+    "sym_tender_breasts"
+  ],
+  "cat_features": [
+    "phase",
+    "fitness_level"
+  ],
+  "target_classes": [
+    "high",
+    "low",
+    "moderate"
+  ]
+}
