@@ -1,7 +1,7 @@
 ## Project Metadata
 
 - Project title: CycleSync — Cycle-based Training & Recovery Coach
-- Student: Claudia Carvalho Paula (Business Informatics, class TZaBIS)
+- Student: Claudia Carvalho Paula (Wirtschaftsinformatik Business Information Systems, class TZaBIS)
 - GitHub repository URL: https://github.com/carvacla/cyclesync_KI_project
 - Deployment URL: https://huggingface.co/spaces/CarvalhoClaudia/cyclesync
 - Submission date: 07.06.2026
