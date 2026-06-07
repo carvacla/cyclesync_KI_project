@@ -165,7 +165,7 @@ The three screenshots above document representative end-to-end outputs of the fi
 
 The evaluation shows that the system generally produces explanations that are consistent with the structured ML prediction. It also shows relevant limitations, especially duplicate sources and occasionally weakly related PubMed abstracts.
 
-- Results: Overall, the RAG component generated understandable and context-aware explanations that were aligned with the ML predictions. The strongest outputs were generated when the retrieved PubMed abstracts were directly related to the predicted phase and symptoms. PROMPT_B improved the structure and consistency of the generated answers.
+- Results: Overall, the RAG component generated understandable and context-aware explanations that were aligned with the ML predictions. The strongest outputs were generated when the retrieved PubMed abstracts were directly related to the predicted phase and symptoms.
 
 - Error patterns and likely causes: The main limitation is retrieval quality. In some cases, the same PubMed source appears multiple times, and some retrieved abstracts are only loosely related to the specific recommendation. This is caused by the current Top-k similarity retrieval, which does not enforce source diversity. A future improvement would be to add duplicate filtering, Maximum Marginal Relevance (MMR), stricter source relevance checks and a larger evaluation set.
 
