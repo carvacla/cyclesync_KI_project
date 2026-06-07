@@ -117,11 +117,12 @@ List every usage of a data source as a separate entry. If the same source is use
 #### 2B.4 Comparison and Iterations
 | Iteration | Objective | Key changes | Model or prompt setup | Main metric or qualitative check | Change vs previous |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Baseline RAG | MiniLM embeddings, Top-4 retrieval, zero-shot prompt (PROMPT_A) | gpt-4o-mini, temp=0.3 | Qualitative review of multiple test scenarios; final documentation focuses on 3 representative end-to-end tests: sources relevant, but citations inconsistent | — |
-| 2 | Structured prompt | Explicit 4-point answer structure (recommendation, reasoning, citations, disclaimer) | gpt-4o-mini, temp=0.3, PROMPT_B | More consistent citations, clearer answers, disclaimer always present | Clear improvement |
-| 3 | — | — | — | — | — |
+| 1 | Baseline RAG | MiniLM embeddings, Top-4 retrieval, initial structured prompt | gpt-4o-mini, temp=0.3 | Qualitative review: answers were understandable, but source quality varied | — |
+| 2 | Improved structured output | Prompt refined to require recommendation, physiological reasoning, PubMed citations and disclaimer | gpt-4o-mini, temp=0.3 | More consistent answer structure and disclaimer inclusion | Improved clarity and consistency |
+| 3 | End-to-end evaluation | Tested complete ML → RAG pipeline on 3 representative user scenarios | Final deployed setup | Checked ML/RAG consistency, citation presence, tone and limitations | Confirmed integration and identified retrieval limitations |
 
-See [`docs/screenshots/Qualitative_Bewertung_FollikelLuteal_Result.png`](screenshots/Qualitative_Bewertung_FollikelLuteal_Result.png).
+The main iteration was the refinement from a simple RAG prompt to a more structured prompt. The final version explicitly asks for a concrete training recommendation, physiological reasoning, PubMed citations and a medical disclaimer. This improved the consistency and readability of the generated explanations.
+
 
 #### 2B.5 Evaluation and Error Analysis
 
