@@ -4,7 +4,7 @@ pandas==2.2.2
 scikit-learn==1.6.1
 xgboost==2.1.1
 joblib==1.4.2
-openai==1.51.0
+openai==1.54.4
 langchain==0.3.7
 langchain-openai==0.2.5
 langchain-community==0.3.5
