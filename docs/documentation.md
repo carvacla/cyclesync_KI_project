@@ -1,31 +1,7 @@
-# AI Applications Project Documentation Template
-
-Use this template to document your project concisely and completely.
-Fill in all required fields. Keep answers short and precise.
-
-## Documentation Hint
-
-Important:
-When possible, reference the corresponding code location directly in your description.
-
-### Example: Reference to a notebook section
-Reference to the header `## Data Preprocessing` in the notebook `analysis.ipynb`:
-
-> See *Data Preprocessing* in
-> [`analysis.ipynb`](analysis.ipynb#data-preprocessing)
-
-### Example: Reference to Python code
-
-Reference to a single line in `model.py`, line 42:
-> [`model.py`, line 42](model.py#L42)
-
-Reference to multiple lines in `train.py`, lines 15-38:
-> [`train.py`, lines 15-38](train.py#L15-L38)
-
 ## Project Metadata
 
-- Project title: CycleSync — Zyklusbasierter Trainings- & Recovery-Coach
-- Student: Claudia Carvalho Paula (Wirtschaftsinformatik, Klasse TZaBIS)
+- Project title: CycleSync — Cycle-based Training & Recovery Coach
+- Student: Claudia Carvalho Paula (Business Informatics, class TZaBIS)
 - GitHub repository URL: https://github.com/carvacla/cyclesync_KI_project
 - Deployment URL: https://huggingface.co/spaces/CarvalhoClaudia/cyclesync
 - Submission date: 07.06.2026
@@ -57,17 +33,17 @@ Evidence hint: Show where each selected block contributes to the final system.
 ## 1. Project Foundation (Short)
 
 ### 1.1 Problem Definition
-- Problem statement: Sportwissenschaftliche Forschung und Mainstream-Trainings-Apps berücksichtigen die zyklischen physiologischen Veränderungen weiblicher Athletinnen bislang kaum. Empfehlungen basieren überwiegend auf männlichen Studienpopulationen, was für weibliche Nutzerinnen zu suboptimalen Trainings- und Recovery-Empfehlungen führen kann.
-- Goal: Eine Web-App, die aus Zyklus- und Wellness-Daten eine begründete Trainingsempfehlung erzeugt und diese mit aktueller wissenschaftlicher Literatur (PubMed) erklärt.
+- Problem statement: Sports science research and mainstream training apps largely ignore the cyclical physiological changes female athletes experience throughout their menstrual cycle. Recommendations are predominantly based on male study populations, which can lead to suboptimal training and recovery guidance for female users.
+- Goal: Build a web application that generates evidence-based training recommendations from cycle and wellness data, and explains them using current scientific literature from PubMed.
 - Success criteria:
-  1. ML-Klassifikator erreicht F1 (macro) ≥ 0.75 auf dem Hold-out-Set
-  2. RAG-Pipeline liefert pro Empfehlung ≥ 2 thematisch passende PubMed-Quellen
-  3. End-to-End-Antwort < 10s in der deployten App
-  4. Öffentlich erreichbares Deployment auf HuggingFace Spaces
+  1. ML classifier achieves F1 (macro) ≥ 0.75 on the hold-out test set
+  2. RAG pipeline returns at least 2 thematically relevant PubMed sources per recommendation
+  3. End-to-end response latency < 10s in the deployed app
+  4. Publicly accessible deployment on HuggingFace Spaces
 
 ### 1.2 Integration Logic
-- How the selected blocks interact: Der ML-Block klassifiziert die Trainingsempfehlung (low/moderate/high) aus strukturierten User-Daten (Zyklustag, Symptome, Schlafqualität, etc.). Die strukturierte Vorhersage (Phase, Intensität, Recovery-Stunden, Risiko, Konfidenz) wird als Kontext an die RAG-Pipeline weitergegeben. Diese retrieved passende PubMed-Abstracts und ein LLM generiert eine personalisierte, deutschsprachige Erklärung mit Studien-Zitaten.
-- Data and output flow between blocks: User-Input → ML-Pipeline ([`src/ml_model.py`](../src/ml_model.py)) → strukturierte Vorhersage → RAG ([`src/rag_pipeline.py`](../src/rag_pipeline.py)) → kombinierte Antwort mit Empfehlung, Erklärung und Quellen. Orchestriert durch [`src/recommender.py`](../src/recommender.py), präsentiert via [`app.py`](../app.py).
+- How the selected blocks interact: The ML block classifies the training recommendation (low/moderate/high) from structured user data (cycle day, symptoms, sleep quality, resting heart rate, etc.). The structured prediction (phase, intensity, recovery hours, risk, confidence) is then passed as context to the RAG pipeline. The RAG retrieves matching PubMed abstracts and a large language model generates a personalized German-language explanation citing the studies.
+- Data and output flow between blocks: User input → ML pipeline ([`src/ml_model.py`](../src/ml_model.py)) → structured prediction → RAG pipeline ([`src/rag_pipeline.py`](../src/rag_pipeline.py)) → combined response containing recommendation, explanation, and source list. Orchestrated by [`src/recommender.py`](../src/recommender.py), presented via [`app.py`](../app.py).
 
 Guidance hint: This section should be short. The detailed work belongs in block sections.
 Evidence hint: Include one clear pipeline overview.
@@ -85,34 +61,36 @@ List every usage of a data source as a separate entry. If the same source is use
 
 | Entry | Source name or link | Type | Size | Role in this block |
 | --- | --- | --- | --- | --- |
-| 1 | Synthetisches Cycle-Tracking-Dataset (generiert in [`notebooks/01_data_acquisition.ipynb`](../notebooks/01_data_acquisition.ipynb), basierend auf publizierten physiologischen Mustern: Schmalenberger et al. 2021, Carmichael et al. 2021) | Numeric/categorical (Zyklustag, Phase, BBT, Schlaf, Symptome, Ruhepuls, Alter, Fitness-Level) | 500 Userinnen × 3 Zyklen × 28 Tage = 42'000 Tagesrecords | Trainings- und Evaluations-Set für den Empfehlungs-Klassifikator |
-| 2 | Synthetisches Workout-Dataset (generiert in Notebook 01, basierend auf McNulty et al. 2020 Meta-Analyse) | Numeric/categorical (Sportart, Dauer, HF, RPE, Recovery, Wetter) | ~10'000 Workouts | Validierung der Phasen-Performance-Annahmen, ergänzende Datenbasis für Realismus |
+| 1 | Synthetic cycle-tracking dataset, generated in [`notebooks/01_data_acquisition.ipynb`](../notebooks/01_data_acquisition.ipynb) based on published physiological patterns (Schmalenberger et al. 2021, Carmichael et al. 2021) | Numeric/categorical (cycle day, phase, BBT, sleep hours/quality, symptoms, resting HR, age, fitness level) | 500 users × 3 cycles × 28 days = 42'000 daily records | Training and evaluation set for the recommendation classifier |
+| 2 | Synthetic workout dataset, generated in Notebook 01 based on the McNulty et al. 2020 meta-analysis | Numeric/categorical (sport, duration, average HR, RPE, recovery hours, weather) | ~10'000 workouts | Validation of phase-dependent performance assumptions, supporting realism for the feature space |
 | 3 | — | — | — | — |
 
 #### 2A.2 Preprocessing and Features
-- Cleaning steps: Symptome werden aus ';' getrennten Strings in 6 binäre Features expandiert (`sym_cramps`, `sym_fatigue`, etc.). Keine fehlenden Werte (synthetische Daten). Siehe [`notebooks/02_eda.ipynb`](../notebooks/02_eda.ipynb#4-processed-data-speichern).
-- Preprocessing steps: `ColumnTransformer` mit `StandardScaler` für 13 numerische Features und `OneHotEncoder` für 2 kategorische Features (Phase, Fitness-Level). Stratifizierter 70/15/15 Split (Train/Val/Test). Siehe [`notebooks/03_ml_modeling.ipynb`](../notebooks/03_ml_modeling.ipynb#1-daten-laden-features-definieren).
-- Feature engineering and selection: Abgeleitete Features `symptom_count` (Summe der Symptome) und 6 binäre Symptom-Indikatoren `sym_<symptom>`. Feature-Importance via Random Forest analysiert. Die wichtigsten Features sind: `sleep_quality` (~0.24), `day_in_cycle` (~0.19), `phase_follicular` (~0.11), `symptom_count` (~0.09), `phase_luteal` (~0.08).
+- Cleaning steps: Symptom strings (semicolon-separated) are expanded into 6 binary indicator features (`sym_cramps`, `sym_fatigue`, `sym_mood_low`, `sym_headache`, `sym_bloating`, `sym_tender_breasts`). No missing values, as data is synthetic and deterministic. See [`notebooks/02_eda.ipynb`](../notebooks/02_eda.ipynb#4-processed-data-speichern).
+- Preprocessing steps: A `ColumnTransformer` applies `StandardScaler` to 13 numeric features and `OneHotEncoder` to 2 categorical features (phase, fitness_level). Stratified 70/15/15 split for train/validation/test, see [`notebooks/03_ml_modeling.ipynb`](../notebooks/03_ml_modeling.ipynb#1-daten-laden-features-definieren).
+- Feature engineering and selection: Derived feature `symptom_count` (sum of symptom indicators) and 6 binary symptom flags. Feature importance was analyzed via the Random Forest classifier. The most important predictors are `sleep_quality` (~0.24), `day_in_cycle` (~0.19), `phase_follicular` (~0.11), `symptom_count` (~0.09), and `phase_luteal` (~0.08). See [`docs/screenshots/RandomForestFeatures.png`](screenshots/RandomForestFeatures.png).
 
 #### 2A.3 Model Selection
-- Models tested: Logistic Regression (Baseline), Random Forest, XGBoost.
-- Why these models were chosen: Logistic Regression als interpretierbare lineare Baseline; Random Forest als robustes Ensemble-Modell mit guter Performance bei strukturierten Daten und gemischten Feature-Typen; XGBoost als Gradient-Boosting-Vergleich (State-of-the-Art für Tabellendaten).
+- Models tested: Logistic Regression (baseline), Random Forest, XGBoost.
+- Why these models were chosen: Logistic Regression serves as an interpretable linear baseline. Random Forest is a robust ensemble model well-suited to tabular data with mixed feature types. XGBoost provides a gradient-boosting comparison representing state-of-the-art performance on structured data.
 
 #### 2A.4 Model Comparison and Iterations
 | Iteration | Objective | Key changes | Models used | Main metric | Change vs previous |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Baseline | Standardparameter, multinomial | Logistic Regression | Val F1 (macro): 0.881, Val Accuracy: 0.898 | — |
+| 1 | Baseline | Default parameters, multinomial logistic regression | Logistic Regression | Val F1 (macro): 0.881, Val Accuracy: 0.898 | — |
 | 2 | Ensemble | n_estimators=200, max_depth=15 | Random Forest | Val F1 (macro): 1.000, Val Accuracy: 1.000 | +0.119 F1 |
 | 3 | Gradient Boosting | n_estimators=300, max_depth=6, lr=0.1 | XGBoost | Val F1 (macro): 1.000, Val Accuracy: 1.000 | ±0.000 vs Iter 2 |
 
+Visual comparison: [`docs/screenshots/Modell_Vergleich_ValidationSet.png`](screenshots/Modell_Vergleich_ValidationSet.png).
+
 #### 2A.5 Evaluation and Error Analysis
-- Metrics used: Accuracy, F1 (macro), Confusion Matrix, Feature Importance.
-- Final results: Random Forest auf Test-Set: **F1 (macro) = 1.000**, **Accuracy = 1.000**. Confusion Matrix zeigt perfekte Klassifikation: low (3031), moderate (1059), high (2210), keine Fehlklassifikationen.
-- Error patterns and likely causes: Die perfekten Scores von Random Forest und XGBoost sind methodisch erklärbar und reflexionswürdig: Das Target `recommended_intensity` wird in Notebook 01 durch eine **deterministische Regelfunktion** (`recommend_intensity()`) aus Phase, Schlafqualität und Symptomen generiert. Tree-basierte Modelle wie Random Forest und XGBoost können diese Regel praktisch perfekt rekonstruieren, weil ihre Splits genau die Schwellwerte (sleep_quality ≤ 4, symptom_count ≥ 2 etc.) abbilden können. Logistic Regression als lineares Modell erreicht "nur" 88% F1, weil sie diese diskreten Schwellen schlechter modellieren kann. Für ein produktives System mit realen, verrauschten Labels wäre dieses Verhalten nicht zu erwarten — die deterministische Label-Funktion ist eine Limitierung der synthetischen Datengrundlage.
+- Metrics used: Accuracy, F1 (macro), Confusion Matrix, Feature Importance. See screenshots [`LogisticRegression.png`](screenshots/LogisticRegression.png), [`RandomForest.png`](screenshots/RandomForest.png), [`XGBoost.png`](screenshots/XGBoost.png).
+- Final results: Random Forest on test set: **F1 (macro) = 1.000**, **Accuracy = 1.000**. The confusion matrix shows perfect classification: 3031 low, 1059 moderate, 2210 high, no misclassifications. See [`docs/screenshots/ConfusionMatrix.png`](screenshots/ConfusionMatrix.png).
+- Error patterns and likely causes: The perfect scores of Random Forest and XGBoost are methodologically explainable and warrant critical reflection. The target `recommended_intensity` is generated in Notebook 01 by a **deterministic rule function** (`recommend_intensity()`) derived from phase, sleep quality, and symptoms. Tree-based models can reconstruct this rule almost perfectly because their splits naturally align with the threshold values used (e.g. `sleep_quality <= 4`, `symptom_count >= 2`). Logistic Regression, being a linear model, scores only ~88% F1 because it cannot model these discrete thresholds as well. For a production system trained on real, noisy labels this behavior would not be expected — the deterministic label function is a known limitation of the synthetic data foundation.
 
 #### 2A.6 Integration with Other Block(s)
-- Inputs received from other block(s): Keine direkten Inputs aus dem NLP-Block in der aktuellen Version.
-- Outputs provided to other block(s): Strukturierte Vorhersage `{phase, intensity, recovery_hours, risk, confidence}` wird via [`CycleSyncRecommender`](../src/recommender.py#L8-L19) an die RAG-Pipeline übergeben. Die Phase und Intensität steuern dort die Retrieval-Query, und alle Werte fliessen als Kontext in den Prompt ein.
+- Inputs received from other block(s): None in the current version — the ML block operates directly on structured user input.
+- Outputs provided to other block(s): The structured prediction `{phase, intensity, recovery_hours, risk, confidence}` is passed to the RAG pipeline via the [`CycleSyncRecommender`](../src/recommender.py#L8-L19). Phase and intensity values shape the retrieval query, and all values are injected into the prompt as context.
 
 Guidance hint: Keep entries practical and evidence-based.
 Evidence hint: Add values, not only claims.
@@ -124,40 +102,42 @@ List every usage of a data source as a separate entry. If the same source is use
 
 | Entry | Source name or link | Type | Size | Role in this block |
 | --- | --- | --- | --- | --- |
-| 1 | PubMed Abstracts via NCBI E-utilities (8 Queries: menstrual cycle exercise, luteal phase training, etc.) | Text (wissenschaftliche Abstracts inkl. Titel, PMID, Jahr, Autoren) | ~300 Abstracts | Wissensbasis für RAG-Retrieval |
-| 2 | Strukturierte ML-Vorhersage aus Block 2A | JSON-strukturiert | pro Request | Kontext im Prompt + steuert Retrieval-Query |
-| 3 | User-Profil aus Streamlit-UI ([`app.py`](../app.py)) | strukturiert (Zyklustag, Symptome, Schlaf, etc.) | pro Request | Personalisierung der Erklärung |
+| 1 | PubMed abstracts via NCBI E-utilities (8 search queries on menstrual cycle / exercise / training topics) | Text (scientific abstracts with title, PMID, year, authors) | ~300 abstracts | Knowledge base for RAG retrieval |
+| 2 | Structured ML prediction from Block 2A | JSON-structured | per request | Context in the prompt + drives the retrieval query |
+| 3 | User profile from the Streamlit UI ([`app.py`](../app.py)) | Structured (cycle day, symptoms, sleep data, etc.) | per request | Personalizes the explanation |
 
 #### 2B.2 Preprocessing and Prompt Design
-- Text preprocessing: Filterung von Abstracts mit < 100 Zeichen, Deduplication per PMID, Metadata-Anreicherung (Jahr, Autoren). Kein Chunking nötig, da Abstracts inhärent kurz sind. Siehe [`notebooks/04_rag_pipeline.ipynb`](../notebooks/04_rag_pipeline.ipynb#1-dokumente-vorbereiten).
-- Prompt design or retrieval setup: Lokales Embedding-Modell `sentence-transformers/all-MiniLM-L6-v2` (kostenlos, kein API-Aufruf), Chroma als persistente Vektor-DB unter [`models/chroma_db/`](../models/chroma_db/), Top-4 Retrieval. Prompt enthält strukturierten User- und ML-Kontext sowie retrieved Abstracts; verlangt deutsche Antwort in 4 strukturierten Teilen: konkrete Empfehlung, physiologische Begründung, mindestens 2 Studien-Zitate per `[PMID:xxxx]`, Disclaimer. Siehe [`src/rag_pipeline.py`, lines 8-31](../src/rag_pipeline.py#L8-L31).
+- Text preprocessing: Abstracts shorter than 100 characters are filtered out, deduplication by PMID, metadata enrichment (year, authors). No chunking required, as abstracts are inherently short. See [`notebooks/04_rag_pipeline.ipynb`](../notebooks/04_rag_pipeline.ipynb#1-dokumente-vorbereiten).
+- Prompt design or retrieval setup: Local embedding model `sentence-transformers/all-MiniLM-L6-v2` (free, runs on CPU). Chroma serves as the vector store, built in-memory at app startup from the persisted JSONL file (avoiding cross-version chromadb format incompatibilities). Top-4 retrieval. The prompt contains the structured user and ML context as well as the retrieved abstracts and asks for a German response in four structured parts: concrete recommendation, physiological reasoning, at least two `[PMID:xxxx]` citations, and a disclaimer. See [`src/rag_pipeline.py`, lines 11-32](../src/rag_pipeline.py#L11-L32).
 
 #### 2B.3 Approach Selection
-- Approach used (classical NLP, transformer, RAG, prompt engineering): Retrieval-Augmented Generation (RAG) mit GPT-4o-mini als Generator und einem lokalen Sentence-Transformer als Encoder.
-- Alternatives considered: (1) Reines Prompt-Engineering ohne Retrieval — verworfen wegen Halluzinationsrisiko bei medizinischen Aussagen und fehlender Quellenbelege. (2) Klassisches Information-Retrieval mit TF-IDF — verworfen wegen schlechterer semantischer Trefferqualität bei sportwissenschaftlichen Fachbegriffen.
+- Approach used (classical NLP, transformer, RAG, prompt engineering): Retrieval-Augmented Generation (RAG) with GPT-4o-mini as generator and a local Sentence-Transformer as encoder.
+- Alternatives considered: (1) Pure prompt engineering without retrieval — rejected due to hallucination risk on medical topics and the lack of citable sources. (2) Classical information retrieval with TF-IDF — rejected because it captures fewer semantic similarities for sports-science terminology.
 
 #### 2B.4 Comparison and Iterations
 | Iteration | Objective | Key changes | Model or prompt setup | Main metric or qualitative check | Change vs previous |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Baseline-RAG | MiniLM-Embeddings, Top-4 Retrieval, Zero-Shot Prompt (PROMPT_A) | gpt-4o-mini, temp=0.3 | Qualitative Bewertung 5 Testszenarien: Quellen relevant, aber Zitate inkonsistent | — |
-| 2 | Strukturierter Prompt | Explizite 4-Punkt-Antwortstruktur (Empfehlung, Begründung, Zitate, Disclaimer) | gpt-4o-mini, temp=0.3, PROMPT_B | Konsistentere Zitierungen, klarere Antworten, Disclaimer immer enthalten | Deutliche Verbesserung |
+| 1 | Baseline RAG | MiniLM embeddings, Top-4 retrieval, zero-shot prompt (PROMPT_A) | gpt-4o-mini, temp=0.3 | Qualitative review of 5 test scenarios: sources relevant, but citations inconsistent | — |
+| 2 | Structured prompt | Explicit 4-point answer structure (recommendation, reasoning, citations, disclaimer) | gpt-4o-mini, temp=0.3, PROMPT_B | More consistent citations, clearer answers, disclaimer always present | Clear improvement |
 | 3 | — | — | — | — | — |
 
+See [`docs/screenshots/Qualitative_Bewertung.png`](screenshots/Qualitative_Bewertung.png) and [`docs/screenshots/Qualitative_Bewertung_FollikelLuteal.png`](screenshots/Qualitative_Bewertung_FollikelLuteal.png).
+
 #### 2B.5 Evaluation and Error Analysis
-- Evaluation strategy: Qualitative Bewertung von 3 Test-Szenarien (frühe Follikelphase, späte Lutealphase mit Symptomen, Menstruationstag mit Krämpfen) in [`notebooks/05_integration_test.ipynb`](../notebooks/05_integration_test.ipynb). Bewertungs-Kriterien: Relevanz der Retrieval-Treffer, Faktentreue der Erklärung, Tonfall, Disclaimer-Konformität.
-- Results: PROMPT_B (strukturiert) liefert konsistenter Zitate und enthält den Disclaimer zuverlässig. Beispiel-Output für Tag 7 (Follikelphase), Lauftraining: empfiehlt hohe Intensität mit Bezug auf Östrogen-Effekt auf Performance, zitiert PMID:36129579 (iron homeostasis) und PMID:39189220 (pelvic floor muscles).
-- Error patterns and likely causes: (1) Bei sehr generischen User-Inputs (keine Symptome, normaler Schlaf) sind retrieved Abstracts manchmal nur lose mit der konkreten Phase verbunden. (2) Das Modell tendiert dazu, denselben Abstract mehrfach zu zitieren wenn er thematisch dominant ist. Ursache: Top-4 Retrieval gibt keine Diversity-Garantie; MMR (Maximum Marginal Relevance) wäre eine Erweiterung.
+- Evaluation strategy: Qualitative evaluation of 3 test scenarios (early follicular phase, late luteal with symptoms, menstrual day with cramps) in [`notebooks/05_integration_test.ipynb`](../notebooks/05_integration_test.ipynb). Criteria: relevance of retrieval hits, factual accuracy of the explanation, tone, and disclaimer conformity.
+- Results: PROMPT_B (structured) produces more consistent citations and reliably includes the disclaimer. Example output for cycle day 7 (follicular phase), running: recommends high intensity referencing estrogen's effect on performance, citing PMID:36129579 (iron homeostasis) and PMID:39189220 (pelvic floor muscles).
+- Error patterns and likely causes: (1) For very generic user inputs (no symptoms, normal sleep) retrieved abstracts are sometimes only loosely related to the specific phase. (2) The model tends to cite the same abstract multiple times if it is thematically dominant. Cause: Top-k retrieval does not enforce diversity; Maximum Marginal Relevance (MMR) would be a natural extension.
 
 #### 2B.6 Integration with Other Block(s)
-- Inputs received from other block(s): Strukturierte ML-Vorhersage `{phase, intensity, recovery_hours, risk, confidence}` aus Block 2A — wird Teil des Prompt-Kontexts und steuert die Retrieval-Query (siehe [`src/rag_pipeline.py`, lines 53-58](../src/rag_pipeline.py#L53-L58)).
-- Outputs provided to other block(s): Natürlichsprachliche Erklärung + Liste der zitierten Studien (PMID, Titel, Jahr) zurück an die App-Schicht ([`app.py`](../app.py)) zur Anzeige.
+- Inputs received from other block(s): Structured ML prediction `{phase, intensity, recovery_hours, risk, confidence}` from Block 2A — included in the prompt context and used to build the retrieval query (see [`src/rag_pipeline.py`, lines 80-87](../src/rag_pipeline.py#L80-L87)).
+- Outputs provided to other block(s): Natural-language explanation plus a list of cited studies (PMID, title, year) returned to the application layer ([`app.py`](../app.py)) for display.
 
 Guidance hint: Show concrete prompt or retrieval decisions.
 Evidence hint: Include representative outputs or failure cases.
 
 ### 2C. Computer Vision (If selected)
 
-N/A — Computer Vision ist in diesem Projekt nicht ausgewählt.
+N/A — Computer Vision is not part of this project.
 
 #### 2C.1 Data Source(s)
 N/A
@@ -186,11 +166,11 @@ Evidence hint: Include sample outputs and observed failure cases.
 
 - Deployment URL: https://huggingface.co/spaces/CarvalhoClaudia/cyclesync
 - Main user flow:
-  1. Nutzerin trägt in der Sidebar Zyklustag, Symptome, Schlafdaten, Ruhepuls und das geplante Workout ein.
-  2. App ruft `CycleSyncRecommender.recommend()` auf ([`src/recommender.py`](../src/recommender.py)).
-  3. ML-Vorhersage erscheint in 4 Metric-Kacheln (Zyklusphase, Intensität, Recovery, Risiko).
-  4. LLM-Erklärung erscheint darunter, mit aufklappbarer Quellenliste (PubMed-Links) und Modell-Konfidenz.
-- Screenshot or short demo: Siehe [`docs/screenshots/`](screenshots/) für UI-Screenshots, Modell-Vergleich, Confusion Matrix und Feature Importance.
+  1. User enters cycle day, symptoms, sleep data, resting heart rate, and the planned workout in the sidebar.
+  2. The app calls `CycleSyncRecommender.recommend()` ([`src/recommender.py`](../src/recommender.py)).
+  3. The ML prediction is displayed in 4 metric tiles (cycle phase, intensity, recovery time, risk).
+  4. Below, the LLM-generated explanation appears together with an expandable list of cited sources (PubMed links) and model confidence.
+- Screenshot or short demo: See [`docs/screenshots/Anzeige.png`](screenshots/Anzeige.png) and [`docs/screenshots/AnzeigeHF.png`](screenshots/AnzeigeHF.png) for the running app on HuggingFace Spaces.
 
 Guidance hint: Deployment must be usable.
 Evidence hint: Add screenshots or short demo references.
@@ -204,17 +184,17 @@ Evidence hint: Add screenshots or short demo references.
   git clone https://github.com/carvacla/cyclesync_KI_project.git
   cd cyclesync_KI_project
   python -m venv .venv
-  source .venv/bin/activate    # Mac/Linux
+  source .venv/bin/activate     # Mac/Linux
   pip install -r requirements.txt
-  cp .env.example .env         # OPENAI_API_KEY eintragen
+  cp .env.example .env          # set OPENAI_API_KEY
 ```
-- Data setup: Notebook [`notebooks/01_data_acquisition.ipynb`](../notebooks/01_data_acquisition.ipynb) ausführen — generiert synthetische Cycle- und Workout-Daten (deterministisch via `RANDOM_STATE=42`) und lädt ~300 PubMed-Abstracts via Biopython (NCBI E-utilities API).
-- Training command(s): Notebooks 02 → 03 → 04 in Reihenfolge ausführen. Ergebnisse: `models/best_classifier.joblib`, `models/feature_meta.json`, `models/chroma_db/`.
+- Data setup: Run [`notebooks/01_data_acquisition.ipynb`](../notebooks/01_data_acquisition.ipynb) — generates the synthetic cycle and workout datasets (deterministic via `RANDOM_STATE=42`) and downloads ~300 PubMed abstracts via Biopython (NCBI E-utilities API).
+- Training command(s): Execute notebooks 02 → 03 → 04 in order. Outputs: `models/best_classifier.joblib`, `models/feature_meta.json`, `models/chroma_db/` (the vector store is rebuilt at app startup from the JSONL for deployment compatibility).
 - Inference/run command(s):
 ```bash
   streamlit run app.py
 ```
-- Reproducibility notes: Alle Notebooks nutzen `RANDOM_STATE=42`. Versionen sind in [`requirements.txt`](../requirements.txt) gepinnt (insbesondere `scikit-learn==1.6.1`, weil das Modell mit dieser Version trainiert wurde). Python 3.11+ empfohlen. Für HF Spaces Deployment: `OPENAI_API_KEY` als Secret unter Space Settings → Variables and secrets.
+- Reproducibility notes: All notebooks use `RANDOM_STATE=42`. Library versions are pinned in [`requirements.txt`](../requirements.txt) (notably `scikit-learn==1.6.1` matching the training environment, and `httpx==0.27.2` for OpenAI compatibility on HuggingFace Spaces). Python 3.11 recommended. For HuggingFace Spaces deployment: set `OPENAI_API_KEY` as a Space secret under Settings → Variables and secrets.
 
 Guidance hint: Another person should be able to run your project from this section.
 Evidence hint: Include exact commands and versions.
@@ -234,10 +214,10 @@ Use this section for exceptional work beyond the core requirements.
 
 Evidence for selected bonus items:
 
-**More than two data sources** — Drei verschiedene Datenquellen mit klarem Mehrwert: (1) synthetisches Cycle-Tracking-Dataset für Phase- und Symptom-Modellierung, (2) synthetisches Workout-Dataset für Trainings-Performance-Annahmen, (3) echte PubMed-Abstracts als wissenschaftliche Wissensbasis. Die Trennung erlaubt es, ML-Vorhersage und natürlichsprachliche Begründung unabhängig zu validieren.
+**More than two data sources** — Three distinct data sources with clear added value: (1) synthetic cycle-tracking dataset for phase and symptom modeling, (2) synthetic workout dataset for performance and recovery assumptions, (3) real PubMed abstracts as scientific knowledge base. This separation allows independent validation of the ML prediction and the natural-language reasoning.
 
-**Extended evaluation** — Über die Pflicht-Metriken hinaus wurde Feature-Importance-Analyse durchgeführt (zeigt, dass `sleep_quality` und `day_in_cycle` die wichtigsten Prädiktoren sind). Die methodische Reflexion zu den perfekten Tree-Modell-Scores (siehe 2A.5) ist ein Beispiel für kritische Selbstbewertung statt unkritischer Metrik-Maximierung.
+**Extended evaluation** — Beyond the required metrics, a feature-importance analysis was performed showing that `sleep_quality` and `day_in_cycle` are the strongest predictors. The methodological reflection on the perfect tree-model scores (see 2A.5) demonstrates critical self-assessment instead of uncritical metric maximization. Two prompt variants (zero-shot vs structured) were compared qualitatively over multiple scenarios.
 
-**Ethics, bias, or fairness analysis** — Sportwissenschaftliche Studien sind historisch von männlichen Probanden dominiert (McNulty et al. 2020 berichten, dass < 39% der sportwissenschaftlichen Studien weibliche Teilnehmerinnen einschliessen). Daraus abgeleitete Empfehlungen können für weibliche Athletinnen systematisch suboptimal sein. CycleSync adressiert diese Lücke explizit. Limitationen werden in der App durch einen sichtbaren Disclaimer markiert (keine medizinische Beratung). Datenschutz: keine Persistenz der Nutzereingaben, alle Berechnungen pro Request. Limitationen der synthetischen Daten werden in der Doku transparent gemacht.
+**Ethics, bias, or fairness analysis** — Sports-science research is historically dominated by male participants (McNulty et al. 2020 report that less than 39% of sports-science studies include female participants). Recommendations derived from this literature can therefore be systematically suboptimal for female athletes. CycleSync explicitly addresses this gap. The app includes a visible disclaimer (no medical advice). Privacy: no persistence of user input, all computation runs per request. Limitations of the synthetic data foundation are made transparent in the documentation.
 
-**Creative or exceptional use case** — Die Kombination eines Zyklusphasen-abhängigen Trainings-Klassifikators mit einer RAG-Pipeline über aktuelle PubMed-Literatur in einem deutschsprachigen Streamlit-Frontend mit medizinischer Disclaimern und PubMed-Quellenangaben adressiert einen real existierenden Bedarf in einer unterforschten Domäne.
+**Creative or exceptional use case** — Combining a cycle-phase-aware training classifier with a RAG pipeline over current PubMed literature in a German-language Streamlit frontend (including medical disclaimers and PubMed source links) addresses a real and underserved domain not commonly covered by mainstream training apps or student projects.
