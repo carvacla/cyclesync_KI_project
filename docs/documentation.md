@@ -157,11 +157,12 @@ In this scenario, the ML model predicted menstruation with low intensity, modera
 
 The explanation includes a clear recommendation, a physiological explanation, PubMed citations and a disclaimer. The response is user-friendly and avoids presenting the output as medical diagnosis.
 
-**Prompt comparison**
 
-![Qualitative RAG evaluation table](screenshots/Qualitative_Bewertung_FollikelLuteal_Result.png)
+**Qualitative evaluation summary**
 
-Two prompt variants were compared qualitatively. PROMPT_A generated useful explanations, but PROMPT_B was selected for the final app because it produced more structured answers and more consistent PubMed citations. The final prompt requires a training recommendation, physiological reasoning, PubMed citations and a health disclaimer.
+The three screenshots above document representative end-to-end outputs of the final deployed RAG setup. The focus was not a formal prompt benchmark, but a qualitative check of whether the complete ML → RAG pipeline behaves plausibly for different cycle phases and symptom patterns.
+
+The evaluation shows that the system generally produces explanations that are consistent with the structured ML prediction. It also shows relevant limitations, especially duplicate sources and occasionally weakly related PubMed abstracts.
 
 - Results: Overall, the RAG component generated understandable and context-aware explanations that were aligned with the ML predictions. The strongest outputs were generated when the retrieved PubMed abstracts were directly related to the predicted phase and symptoms. PROMPT_B improved the structure and consistency of the generated answers.
 
